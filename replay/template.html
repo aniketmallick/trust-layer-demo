@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Screwdriver (prop tool) handover demonstration - replay __SESSION__</title>
+<script>if(new URLSearchParams(location.search).has("present"))location.replace("present.html"+location.search)</script>
+<style>
+:root{--bg:#f6f5f1;--ink:#1c1c1a;--mut:#6b6a64;--line:#d8d6cd;--card:#fff;--red:#c0392b;--green:#1e8449;--amber:#b9770e;--blue:#1f5f8b}
+@media (prefers-color-scheme:dark){:root{--bg:#161614;--ink:#ecebe6;--mut:#a09f97;--line:#34332f;--card:#1f1f1c;--red:#e36a5c;--green:#58c27d;--amber:#e0a84a;--blue:#6fb1dd}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+header{padding:18px 16px 10px;border-bottom:1px solid var(--line)}
+h1{font-size:19px;margin:0 0 4px}
+h2{font-size:15px;margin:0 0 8px}
+.tag{display:inline-block;border:1px solid var(--amber);color:var(--amber);border-radius:3px;padding:1px 7px;font-size:12px;font-weight:600;letter-spacing:.04em;margin-right:6px}
+.mut{color:var(--mut)}
+main{padding:14px 16px 40px;max-width:1280px;margin:0 auto}
+section{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+canvas{display:block;width:100%;touch-action:none}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:4px 18px;font-size:13px}
+.facts b{font-weight:600}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+.ok{color:var(--green)}.bad{color:var(--red)}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);padding:5px 8px;border-radius:4px;font-size:12px;max-width:420px;display:none;z-index:9;white-space:pre-wrap}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+td,th{border-top:1px solid var(--line);padding:3px 6px;text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--mut)}
+.log{max-height:520px;overflow:auto}
+.k-freeze td{color:var(--red)}.k-key td{font-weight:600}.k-plan td{color:var(--green)}
+.frames{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
+.frames button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:4px;padding:3px 8px;font-size:12px;cursor:pointer}
+.frames button.on{border-color:var(--red);color:var(--red)}
+ul.lim{margin:4px 0 0 18px;padding:0}
+.layeroff{display:none;margin:0 0 8px;padding:6px 12px;background:var(--red);color:#fff;font-weight:800;font-size:17px;letter-spacing:.05em;border-radius:4px}
+</style>
+</head>
+<body>
+<header>
+  <div class="layeroff" id="layeroff"></div>
+  <h1><span class="tag">DEMONSTRATION</span><span class="tag" id="drytag"></span>Screwdriver (prop tool) handover on the SO-101 - replay</h1>
+  <div class="mut">Built from one session's hash-chained log and nothing else. This is a demonstration: it is not session evidence for any certificate. A screwdriver (prop tool) only.</div>
+</header>
+<main>
+<section><h2>Session</h2><div class="facts" id="facts"></div><ul class="lim mut" id="limits"></ul></section>
+<section><h2>Timeline <span class="mut" id="tspan"></span></h2><canvas id="tl" height="352"></canvas>
+  <div class="mut">Lanes: phase · monitors 1-8 (red = fired; on 7, amber = a hand present without a fire; grey = OFF) · hand-link age (line at 300 ms) · judge calls · keys. Hover for the row.</div></section>
+<div class="grid">
+<section><h2>The frame at the freeze</h2><div class="frames" id="fbtn"></div><canvas id="frame" height="360"></canvas><div class="mut" id="fcap"></div></section>
+<section><h2>Fingertip path (FK) and the workspace box</h2><canvas id="path" height="400"></canvas>
+  <div class="mut">Drag to turn. Red: where the arm froze. Green: where a handover plan took over. Box drawn from the table to 150 mm (its top is at <span id="ztop"></span> mm).</div></section>
+</div>
+<section><h2>Call log <span class="mut">- one line per check, in chain order</span></h2><div class="log"><table id="log"><thead><tr><th>seq</th><th>t (s)</th><th>kind</th><th>what</th></tr></thead><tbody></tbody></table></div></section>
+</main>
+<div id="tip"></div>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+"use strict";
+const D = JSON.parse(document.getElementById("data").textContent);
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const PH = {IDLE:"#9aa0a6",SETUP:"#9aa0a6",GRASP:"#5b8def",LIFT:"#3f6fd1",CP1:"#b08ad6",APPROACH_ZONE:"#2e9e8f",PRE_PLACE:"#2a8577",CP2:"#b08ad6",PLACE:"#d39b2a",RETREAT:"#7d8b99",ASK:"#c0392b",WAIT:"#c97a6f",HANDOVER_APPROACH:"#1e8449",REORIENT:"#6aa84f",HOLD:"#8e6bbf",CP3:"#b08ad6",RELEASE:"#d35400"};
+function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
+function fit(c){const r=window.devicePixelRatio||1,w=c.clientWidth,h=+c.getAttribute("height");c.width=w*r;c.height=h*r;c.style.height=h+"px";const g=c.getContext("2d");g.setTransform(r,0,0,r,0,0);return [g,w,h]}
+
+// ---- facts
+$("drytag").textContent = D.dry_run ? "DRY RUN - NO MOTORS" : "RIG";
+if(D.layer_off){ $("layeroff").textContent = D.layer_off + " - monitors 7 and 8, the judge and the handover planner off"; $("layeroff").style.display = "block"; }
+$("facts").innerHTML = D.facts.map(f=>`<div><b>${esc(f[0])}</b> <span class="${f[2]||""}">${esc(f[1])}</span></div>`).join("");
+$("limits").innerHTML = D.limits.map(l=>`<li>${esc(l)}</li>`).join("");
+$("ztop").textContent = D.box[5];
+const T0 = D.steps.t[0], T1 = D.steps.t[D.steps.t.length-1];
+$("tspan").textContent = `- ${D.steps.t.length} control steps, ${(T1-T0).toFixed(1)} s`;
+
+// ---- timeline
+const tl = $("tl"); let hits = [];
+function drawTL(){
+  const [g,w,h] = fit(tl); hits = [];
+  const L=118, R=10, x = t => L + (t-T0)/(T1-T0)*(w-L-R);
+  g.clearRect(0,0,w,h); g.font="11px sans-serif"; g.textBaseline="middle";
+  const lanes = ["phase","1 joint margin","2 joint speed","3 workspace box","4 gripper load","5 loop time","6 kill switch","7 hand in workspace","8 hand link","link age (ms)","judge","keys"];
+  const ys = [8], hs = [26,13,13,13,13,13,13,13,13,54,28,28];
+  for(let i=1;i<lanes.length;i++) ys.push(ys[i-1]+hs[i-1]+7);
+  g.fillStyle=css("--mut"); lanes.forEach((n,i)=>g.fillText(n,4,ys[i]+hs[i]/2));
+  const S = D.steps, n = S.t.length;
+  // phase blocks
+  let a=0; for(let i=1;i<=n;i++){ if(i===n||S.phase[i]!==S.phase[a]){ const xa=x(S.t[a]), xb=x(S.t[Math.min(i,n-1)]);
+      g.fillStyle=PH[S.phase[a]]||"#888"; g.fillRect(xa,ys[0],Math.max(1,xb-xa),hs[0]);
+      if(xb-xa>30){g.save();g.beginPath();g.rect(xa,ys[0],xb-xa-2,hs[0]);g.clip();g.fillStyle="#fff";g.fillText(S.phase[a],xa+3,ys[0]+hs[0]/2);g.restore()}
+      hits.push([xa,ys[0],Math.max(1,xb-xa),hs[0],`${S.phase[a]}\n${S.t[a].toFixed(2)} s - ${S.t[Math.min(i,n-1)].toFixed(2)} s`]); a=i; } }
+  // monitors
+  for(let m=1;m<=8;m++){ const y=ys[m], hh=hs[m]; g.fillStyle=css("--line"); g.fillRect(L,y,w-L-R,hh);
+    for(let i=0;i<n;i++){ const f=S.mon[i][m-1]; if(f===0) continue; g.fillStyle = f===1?css("--red"):(f===3?css("--line"):css("--amber")); g.fillRect(x(S.t[i]),y,Math.max(1.5,(w-L-R)/n),hh); } }
+  D.events.filter(e=>e.kind==="freeze").forEach(e=>{ const m=e.monitor; if(m>=1&&m<=8) hits.push([x(e.t)-4,ys[m],9,hs[m],`FREEZE - monitor ${m} (${e.code})\n${e.detail}\nframe ${String(e.frame_sha256).slice(0,16)}`]); });
+  // link age
+  { const y=ys[9], hh=hs[9], top=400; g.fillStyle=css("--line"); g.fillRect(L,y,w-L-R,hh);
+    const yy=v=>y+hh-Math.min(v,top)/top*hh; g.strokeStyle=css("--red"); g.setLineDash([4,3]); g.beginPath(); g.moveTo(L,yy(300)); g.lineTo(w-R,yy(300)); g.stroke(); g.setLineDash([]);
+    g.strokeStyle=css("--blue"); g.beginPath(); for(let i=0;i<n;i++){ const v=S.hb[i]; if(v==null) continue; const px=x(S.t[i]), py=yy(v); i?g.lineTo(px,py):g.moveTo(px,py);} g.stroke(); }
+  // judge + keys + freezes
+  const mark=(e,lane,col,txt,tipTxt)=>{ const px=x(e.t), y=ys[lane], hh=hs[lane]; g.fillStyle=col; g.beginPath(); g.arc(px,y+hh/2,7,0,6.3); g.fill(); g.fillStyle="#fff"; g.textAlign="center"; g.fillText(txt,px,y+hh/2+.5); g.textAlign="left"; hits.push([px-8,y,16,hh,tipTxt]); };
+  D.events.forEach(e=>{
+    if(e.kind==="judge") mark(e,10,e.unsafe?css("--red"):css("--green"),e.phase==="FREEZE"?"F":e.phase.slice(-1),`judge at ${e.phase} (${e.model}, ${e.latency_s} s)\nrecommends ${e.recommend}, p_unsafe ${e.p_unsafe} -> ${e.unsafe?"UNSAFE":"not unsafe"} by the code's reading\n${e.reason}\nrubric ${String(e.rubric_sha256).slice(0,12)} frame ${String(e.frame_sha256).slice(0,12)}`);
+    if(e.kind==="key"&&e.accepted) mark(e,11,css("--ink"),e.key,`key [${e.key}] in ${e.state}\nmenu shown: ${e.menu.join(" ")}\non screen: ${e.on_screen||"no verdict"}${e.refused?"\nREFUSED: "+e.refused:""}`);
+    if(e.kind==="freeze"||e.kind==="takeover"){ g.strokeStyle=e.kind==="freeze"?css("--red"):css("--green"); g.lineWidth=1.5; g.beginPath(); g.moveTo(x(e.t),4); g.lineTo(x(e.t),h-16); g.stroke(); g.lineWidth=1; }
+  });
+  g.fillStyle=css("--mut"); const step=(T1-T0)>60?10:5; for(let t=Math.ceil(T0/step)*step;t<=T1;t+=step){ g.fillText(t+" s",x(t)-8,h-6); }
+}
+const tip=$("tip");
+tl.addEventListener("mousemove",ev=>{ const r=tl.getBoundingClientRect(), mx=ev.clientX-r.left, my=ev.clientY-r.top; let t=null;
+  for(let i=hits.length-1;i>=0;i--){const b=hits[i]; if(mx>=b[0]&&mx<=b[0]+b[2]&&my>=b[1]&&my<=b[1]+b[3]){t=b[4];break}}
+  if(t){tip.textContent=t;tip.style.display="block";tip.style.left=Math.min(ev.clientX+12,innerWidth-440)+"px";tip.style.top=(ev.clientY+14)+"px"} else tip.style.display="none"; });
+tl.addEventListener("mouseleave",()=>tip.style.display="none");
+
+// ---- the frame at the freeze
+const fc=$("frame"); let fsel=0; const imgs=D.frames.map(f=>{const im=new Image(); im.onload=drawFrame; im.src=f.jpg; return im});
+D.frames.forEach((f,i)=>{const b=document.createElement("button"); b.textContent=f.label; b.onclick=()=>{fsel=i;drawFrame()}; $("fbtn").appendChild(b)});
+function poly(g,pts,s,col,dash){g.strokeStyle=col;g.setLineDash(dash||[]);g.lineWidth=1.5;g.beginPath();pts.forEach((p,i)=>i?g.lineTo(p[0]*s,p[1]*s):g.moveTo(p[0]*s,p[1]*s));g.closePath();g.stroke();g.setLineDash([]);g.lineWidth=1}
+function drawFrame(){
+  if(!D.frames.length){$("fcap").textContent="No freeze in this session: nothing fired.";const [g,w,h]=fit(fc);g.clearRect(0,0,w,h);return}
+  [...$("fbtn").children].forEach((b,i)=>b.classList.toggle("on",i===fsel));
+  const f=D.frames[fsel], im=imgs[fsel]; fc.setAttribute("height",Math.round(fc.clientWidth*480/640)); const [g,w,h]=fit(fc), s=w/640;
+  g.clearRect(0,0,w,h); if(im.complete&&im.naturalWidth) g.drawImage(im,0,0,w,h);
+  poly(g,D.overlay.box,s,"#f1c40f",[6,4]); poly(g,D.overlay.zone,s,"#2ecc71"); poly(g,D.overlay.spawn,s,"#3498db");
+  (f.hands||[]).forEach(hd=>{ (hd.landmarks_px||[]).forEach(p=>{g.fillStyle="#fff";g.beginPath();g.arc(p[0]*s,p[1]*s,2.2,0,6.3);g.fill()});
+    g.strokeStyle="#e74c3c";g.lineWidth=2;g.beginPath();g.arc(hd.palm_px[0]*s,hd.palm_px[1]*s,9,0,6.3);g.stroke();g.lineWidth=1;
+    const lab=`palm ${hd.palm_mm[0]}, ${hd.palm_mm[1]} mm`; g.fillStyle="#e74c3c";g.font="12px sans-serif";
+    const lx=hd.palm_px[0]*s+12+g.measureText(lab).width>w ? hd.palm_px[0]*s-12-g.measureText(lab).width : hd.palm_px[0]*s+12; g.fillText(lab,lx,hd.palm_px[1]*s-8) });
+  if(f.tcp_px){g.fillStyle="#f39c12";g.beginPath();g.arc(f.tcp_px[0]*s,f.tcp_px[1]*s,5,0,6.3);g.fill();g.fillText("fingertip (FK)",f.tcp_px[0]*s+8,f.tcp_px[1]*s+14)}
+  $("fcap").innerHTML=`${esc(f.caption)}<br><span class="mono">frame sha256 ${esc(f.sha256)}</span> · green: place zone · blue: spawn box · yellow dashes: workspace box (table plane) · red ring: the palm the monitor reported` + (f.note?`<br>${esc(f.note)}`:"");
+}
+
+// ---- 3D path
+const pc=$("path"); let yaw=-0.9, pitch=0.5, drag=null;
+function drawPath(){
+  const [g,w,h]=fit(pc); g.clearRect(0,0,w,h);
+  const b=D.box, cx=(b[0]+b[1])/2, cy=(b[2]+b[3])/2, cz=b[4]+60, sc=Math.min(w,h)/430;
+  const P=p=>{ let X=p[0]-cx,Y=p[1]-cy,Z=p[2]-cz; const x1=X*Math.cos(yaw)-Y*Math.sin(yaw), y1=X*Math.sin(yaw)+Y*Math.cos(yaw);
+    const y2=y1*Math.cos(pitch)-Z*Math.sin(pitch), z2=y1*Math.sin(pitch)+Z*Math.cos(pitch); return [w/2+x1*sc, h/2-z2*sc, y2]; };
+  const zt=b[4]+150, C=[[b[0],b[2]],[b[1],b[2]],[b[1],b[3]],[b[0],b[3]]];
+  g.strokeStyle=css("--mut"); g.setLineDash([5,4]);
+  [b[4],zt].forEach(z=>{g.beginPath();C.forEach((c,i)=>{const q=P([c[0],c[1],z]);i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1])});g.closePath();g.stroke()});
+  C.forEach(c=>{const q1=P([c[0],c[1],b[4]]),q2=P([c[0],c[1],zt]);g.beginPath();g.moveTo(q1[0],q1[1]);g.lineTo(q2[0],q2[1]);g.stroke()}); g.setLineDash([]);
+  [["zone","#2ecc71"],["spawn","#3498db"]].forEach(([k,col])=>{g.strokeStyle=col;g.beginPath();D.quads[k].forEach((c,i)=>{const q=P([c[0],c[1],b[4]]);i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1])});g.closePath();g.stroke()});
+  const S=D.steps; g.lineWidth=2;
+  for(let i=1;i<S.t.length;i++){ const a=P(S.tcp[i-1]), q=P(S.tcp[i]); g.strokeStyle=PH[S.phase[i]]||"#888"; g.beginPath(); g.moveTo(a[0],a[1]); g.lineTo(q[0],q[1]); g.stroke(); }
+  g.lineWidth=1;
+  D.events.forEach(e=>{ if((e.kind==="freeze"||e.kind==="takeover")&&e.tcp){ const q=P(e.tcp); g.fillStyle=e.kind==="freeze"?css("--red"):css("--green"); g.beginPath(); g.arc(q[0],q[1],6,0,6.3); g.fill(); g.strokeStyle="#fff"; g.stroke(); }
+    if(e.kind==="freeze"&&e.palm){ const q=P([e.palm[0],e.palm[1],b[4]+20]); g.strokeStyle=css("--red"); g.beginPath(); g.arc(q[0],q[1],8,0,6.3); g.stroke(); g.fillStyle=css("--red"); g.font="11px sans-serif"; g.fillText("palm",q[0]+10,q[1]); } });
+  const o=P([0,0,b[4]]); g.fillStyle=css("--mut"); g.font="11px sans-serif"; g.fillText("arm base",o[0]+6,o[1]); g.beginPath(); g.arc(o[0],o[1],3,0,6.3); g.fill();
+}
+pc.addEventListener("pointerdown",e=>{drag=[e.clientX,e.clientY,yaw,pitch];pc.setPointerCapture(e.pointerId)});
+pc.addEventListener("pointermove",e=>{if(!drag)return;yaw=drag[2]+(e.clientX-drag[0])*0.01;pitch=Math.max(0.05,Math.min(1.5,drag[3]+(e.clientY-drag[1])*0.01));drawPath()});
+pc.addEventListener("pointerup",()=>drag=null);
+
+// ---- call log
+$("log").querySelector("tbody").innerHTML = D.log.map(r=>`<tr class="k-${r[2]}"><td class="mono">${r[0]}</td><td class="mono">${r[1]==null?"":r[1].toFixed(2)}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join("");
+
+function all(){drawTL();drawFrame();drawPath()}
+addEventListener("resize",all); all();
+</script>
+</body>
+</html>

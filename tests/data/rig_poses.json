@@ -1,0 +1,52 @@
+{
+ "source": "extracted 2026-10-05 from two session chains not shipped in the public repository (their rows are hash-chained: each value carries its row's seq and row_sha256)",
+ "poses": {
+  "CP1": {
+   "session": "KH-S20261003T162529",
+   "seq": 2366,
+   "row_sha256": "c7f364b7378e4ce2c42982368c96a3216155a6526a52651174e71a92b3c5b88f",
+   "q6": [
+    10.374,
+    13.363,
+    5.451,
+    79.209,
+    12.264,
+    12.91
+   ]
+  },
+  "CP2": {
+   "session": "KH-S20261003T162529",
+   "seq": 965,
+   "row_sha256": "3a4bf02fb89f660061e3a879eb2cf3e17371ac23eff2b952fc38aae60c5433c3",
+   "q6": [
+    -19.956,
+    5.538,
+    12.571,
+    77.714,
+    -17.451,
+    12.709
+   ]
+  }
+ },
+ "freezes": {
+  "13:22:26": {
+   "session": "KH-S20261003T130937",
+   "freeze_seq": 3577,
+   "freeze_row_sha256": "3ffea154f8d1b5a5809368bbcd1fa987483692558501f81e9d01c96d80da7e51",
+   "palm_mm": [
+    271.6,
+    104.8
+   ],
+   "step_seq": 3576,
+   "step_row_sha256": "4fefeb4497fe0e986ce33a6195a47d34b6068ff02faf280bd2c559a42f579e10",
+   "q6": [
+    8.615,
+    11.165,
+    5.626,
+    79.297,
+    11.121,
+    12.977
+   ]
+  }
+ }
+}

@@ -1,0 +1,13 @@
+{
+  "note": "The hand monitor's expectations for the saved stills of PLAN.md section 9 (fixtures/frames/<scene>_<k>.png, captured by fixtures/capture_frame.py). Every still of a scene must meet the scene's line, as PNG and as the JPEG the live path sees. A scene with no still is UNKNOWN (skipped: frame not captured), never passed. Arm-frame mm; palm_mm assumes a hand lying on the table (palm 20 mm up).",
+  "tolerance_mm": 15.0,
+  "scenes": {
+    "empty_table": {"monitor": {"hands": 0}},
+    "hand_cross6": {"monitor": {"hands": 1, "palm_mm": [241.1, -58.8], "in_spawn": true, "in_zone": false, "in_workspace": true}},
+    "hand_zone": {"monitor": {"hands": 1, "palm_mm": [246.8, 68.1], "in_spawn": false, "in_zone": true, "in_workspace": true}},
+    "two_hands": {"monitor": {"hands": 2}},
+    "arm_no_hand": {"monitor": {"hands": 0}},
+    "knife_no_hand": {"monitor": {"hands": 0}},
+    "fist_zone": {"monitor": null}
+  }
+}

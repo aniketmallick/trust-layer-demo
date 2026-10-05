@@ -1,0 +1,78 @@
+{
+ "prop": "screwdriver (prop tool)",
+ "recorded_iso": "2026-10-02T10:08:00+05:30",
+ "by": "operator's measurements, 2026-10-02",
+ "grip": "on the handle just behind the shaft (marked); the free handle is presented to the palm; the shaft and tip point the other way past the gripper",
+ "measured_mm": {
+  "total_length": 167.0,
+  "grip_point_to_handle_end": 59.5,
+  "jaw_width_at_grip": 21.0,
+  "thickness_at_grip": 21.0
+ },
+ "planner": {
+  "handle_len_mm": 59.5,
+  "blade_overhang_mm": 107.5,
+  "handle_width_mm": 21.0,
+  "note": "planner field names kept: handle_len = grip -> free handle end (offered to the palm); blade_overhang = grip -> pointed tip (167 - 59.5)",
+  "axis_sign": 1,
+  "axis_sign_source": "operator, 2026-10-02 decision (a): the screwdriver reversed - free handle toward the zone (+y), shaft and tip toward the robot's right; grasp moved ~45 mm toward the zone"
+ },
+ "close_target_from_caliper": {
+  "contact_pct": 14.6,
+  "target_pct": 9.0,
+  "source": "9.0 %: 5.6 % past the caliper contact (14.6 %); the operator's step from 9.4 % (2026-10-05)",
+  "verified": false,
+  "verified_by": "the operator's next run (9.4 % was HOLD_OK, KH-S20261004T163650, load 208)",
+  "squeeze_pct": 5.6
+ },
+ "arm_flags": "--knife-handle-mm 59.5 --knife-blade-mm 107.5 --knife-width-mm 21 --knife-axis-sign 1 --z-handover-mm 55",
+ "lay": {
+  "decision": "(a), 2026-10-02",
+  "free_handle_heading_deg": 90.0,
+  "grip_point_mm": [
+   278.0,
+   -41.0
+  ],
+  "was": "free handle toward the robot's right, grip point (278, -86): axis sign -1 (GRASP recordings 10:26 / 10:29)"
+ },
+ "z_handover_mm": 55.0,
+ "z_handover_source": "proposed by the integrator 11:12 (handle centre ~25 mm above a flat palm); confirmed by the operator 2026-10-02 ~12:50",
+ "changes": [
+  {
+   "t_iso": "2026-10-04T15:39:43+05:30",
+   "by": "the operator, 2026-10-04 (video prep)",
+   "what": "squeeze on the rubber handle 4 % -> 6 % past contact: close target 10.6 % (segments 10.5 %) -> 8.6 %",
+   "reason": "compliant handle, tool pitched nose-down under re-target",
+   "verify": "hold test: lift 20 mm, hold 10 s, log load; if it still pitches, 7 % (7.6 %) and stop there; never past the gripper floor or the overload limit (monitor 4: load 250 for 0.5 s)",
+   "load_expected": "today's grasp checks at 10.5 %: load 136-168 (KH-S20261004T131330, 134743, 152015, 152718); at 46.6 per % of target: 8.6 % ~225-257, 7.6 % ~271-303 - at and past the 250 bar; the hold test decides",
+   "files": [
+    "dawn/segments.json",
+    "dawn/segments_reversed.json"
+   ]
+  },
+  {
+   "t_iso": "2026-10-04T16:31:29+05:30",
+   "by": "the operator, 2026-10-04 (after the hold test KH-S20261004T162508)",
+   "what": "close target 8.6 % -> 9.4 %",
+   "reason": "at 8.6 % the load held at 240-244 and the gripper servo (id 6) tripped its own overload protection after ~1.9 s, twice (LIFT 85.7 s, HOLD 110.2 s: 'Overload error' on the Present_Load read; the arm froze and held; monitor 4's 250 bar was not reached). The close ramp of that session: 10.6 % 148, 10.0 % 176, 9.4 % 200, 9.0 % 220, 8.8 % 228, 8.6 % 244. 9.4 % ~200: ~18 % under the trip, tighter than 10.5 % (136-176, held for minutes, pitched nose-down under re-target)",
+   "verify": "hold test at 9.4 %; no tighter step past a predicted 220 (hold_test.HOLD_LOAD_MAX)",
+   "files": [
+    "dawn/segments.json",
+    "dawn/segments_reversed.json"
+   ],
+   "verified": "HOLD_OK, KH-S20261004T163650: load 208 (mean = max), 10 s, nothing fired"
+  },
+  {
+   "t_iso": "2026-10-05T00:39:15+05:30",
+   "by": "the operator, 2026-10-05",
+   "what": "close target 9.4 % -> 9.0 %",
+   "reason": "the grip loosens after the first pause and the hand freeze, the pointed (heavy) end dips; a step tighter, binary-search style",
+   "load_expected": "~220-228 (the 8.6 % session's ramp: 9.0 % 220; 9.4 % read 208 vs the ramp's 200); the gripper servo tripped its own protection at 240-244 held ~1.9 s",
+   "note": "KH-S20261004T170052: at the first freeze the load fell 180 -> 0 and stayed 0 (goals := present releases the squeeze on the stalled gripper; the placement rows keep the gripper at that reading) - the target changes the grip only until the first freeze",
+   "files": [
+    "dawn/segments.json",
+    "dawn/segments_reversed.json"
+   ]
+  }
+ ]
+}

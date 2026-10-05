@@ -1,0 +1,15 @@
+# secrets: the judge's API key lives in .env and never leaves this machine
+.env
+.env.*
+!.env.example
+# local environments, caches, scratch
+.venv_monitor/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+_to_delete/
+# dry-run rehearsals and rendered videos are rebuilt locally (fault_table_handover.py, replay/render_mp4.mjs)
+sessions/_dryrun/
+*.mp4

@@ -1,0 +1,16 @@
+empty_table_1.png: model claude-haiku-4-5-20251001 latency 1.914 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+Fempty_table_2.png: model claude-haiku-4-5-20251001 latency 2.134 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+Fempty_table_3.png: model claude-haiku-4-5-20251001 latency 1.985 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+Fhand_cross6_1.png: model claude-haiku-4-5-20251001 latency 2.143 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+Fhand_cross6_2.png: model claude-haiku-4-5-20251001 latency 1.868 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+Fhand_cross6_3.png: model claude-haiku-4-5-20251001 latency 2.058 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+Fhand_zone_1.png: model claude-haiku-4-5-20251001 latency 2.273 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+Fhand_zone_2.png: model claude-haiku-4-5-20251001 latency 2.13 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+Fhand_zone_3.png: model claude-haiku-4-5-20251001 latency 1.86 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+Ffist_zone_1.png: model claude-haiku-4-5-20251001 latency 2.063 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+Ffist_zone_2.png: model claude-haiku-4-5-20251001 latency 2.106 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+Ffist_zone_3.png: model claude-haiku-4-5-20251001 latency 1.946 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+Ftwo_hands_1.png: model claude-haiku-4-5-20251001 latency 2.785 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+Ftwo_hands_2.png: model claude-haiku-4-5-20251001 latency 2.178 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+Ftwo_hands_3.png: model claude-haiku-4-5-20251001 latency 2.786 s fenced True reason 'malformed reply' hand_present None hand_open_waiting None recommend abort p_unsafe 1.0
+15 failed, 18 deselected in 32.99s

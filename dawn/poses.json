@@ -1,0 +1,172 @@
+{
+ "SPAWN_HOVER": {
+  "q6_lerobot": [
+   21.187,
+   41.407,
+   -30.945,
+   93.011,
+   27.56,
+   19.064
+  ],
+  "fingertip_mm": [
+   263.3,
+   -83.4,
+   9.8
+  ],
+  "h_above_table_mm": 26.8,
+  "in_box": true,
+  "in_camera_footprint": true,
+  "joint_margin_fires": [],
+  "still": "sessions/KH-DAWN-20261002/photos/pose_SPAWN_HOVER_104220.png",
+  "still_sha256": "a2ef6ea9e5bb0cceeead9259a012f1e43c8761adf8b70cd64ea650b508c16208",
+  "t_iso": "2026-10-02T10:42:20+05:30",
+  "note": "q"
+ },
+ "GRASP": {
+  "q6_lerobot": [
+   21.802,
+   42.035,
+   -22.947,
+   81.201,
+   30.022,
+   13.923
+  ],
+  "fingertip_mm": [
+   267.7,
+   -87.5,
+   -12.1
+  ],
+  "h_above_table_mm": 4.9,
+  "in_box": true,
+  "in_camera_footprint": true,
+  "joint_margin_fires": [],
+  "derived": true,
+  "source": "joint-space interpolation between GRASP 10:26 (tip 1.3 mm) and GRASP 10:29 (tip 29.7 mm) at f=0.1279, the FK fingertip height set to 5.0 mm - the operator's choice 10:33",
+  "gripper_note": "the gripper value here is the interpolated reading; the segment opens the jaws for the descent and closes to the close target",
+  "axis": {
+   "axis_body": [
+    0,
+    -1,
+    0
+   ],
+   "axis_sign": -1,
+   "off_axis_deg": 5.69
+  },
+  "t_iso": "2026-10-02T10:35:11+05:30"
+ },
+ "GRASP_FIRST_1026": {
+  "q6_lerobot": [
+   21.802,
+   42.901,
+   -22.857,
+   80.088,
+   30.022,
+   13.846
+  ],
+  "fingertip_mm": [
+   268.5,
+   -87.8,
+   -15.7
+  ],
+  "h_above_table_mm": 1.3,
+  "in_box": true,
+  "in_camera_footprint": true,
+  "joint_margin_fires": [],
+  "still": "LOST: overwritten by the 10:29 GRASP still (its sha256 is in the dawn chain)",
+  "still_sha256": "a80d32557b2e743162bc6b83bbdae5114ff240afc266100045be273a73ddfdb6",
+  "t_iso": "2026-10-02T10:26:08+05:30",
+  "note": "operator: jaws at the grip mark around the handle; a little wrist roll was needed to align; asks for a tighter grasp (loosens otherwise)"
+ },
+ "GRASP_RECORDED_1029": {
+  "q6_lerobot": [
+   21.802,
+   36.132,
+   -23.56,
+   88.791,
+   30.022,
+   14.448
+  ],
+  "fingertip_mm": [
+   261.1,
+   -84.8,
+   12.7
+  ],
+  "h_above_table_mm": 29.7,
+  "in_box": true,
+  "in_camera_footprint": true,
+  "joint_margin_fires": [],
+  "still": "sessions/KH-DAWN-20261002/photos/pose_GRASP.png",
+  "still_sha256": "f6d24c36b8bbf1002ea04d03b5e4b193a71c7c8636f0fb19f53349f437171fa0",
+  "t_iso": "2026-10-02T10:29:40+05:30",
+  "note": "re-recorded: jaws raised ~10 mm around the handle (first GRASP 10:26 had the fingertip 1.3 mm above the table by FK; kept in the dawn chain); operator confirms axis sign -1 (free handle away from the zone)"
+ },
+ "SPAWN_HOVER_replaced_104106": {
+  "q6_lerobot": [
+   23.56,
+   30.154,
+   -29.275,
+   83.516,
+   -4.0,
+   1.672
+  ],
+  "fingertip_mm": [
+   293.3,
+   -114.6,
+   51.9
+  ],
+  "h_above_table_mm": 68.9,
+  "in_box": true,
+  "in_camera_footprint": true,
+  "joint_margin_fires": [],
+  "still": "sessions/KH-DAWN-20261002/photos/pose_SPAWN_HOVER.png",
+  "still_sha256": "8b81bd14f22c7128ace7f99c9ae13a2d2d7097bb8fb7320bf0af4ab7558f6e66",
+  "t_iso": "2026-10-02T10:23:34+05:30",
+  "note": "operator: fingertips ~40 mm above the prop at the grip mark, jaws open, roll 0"
+ },
+ "SPAWN_HOVER_replaced_104220": {
+  "q6_lerobot": [
+   22.857,
+   41.231,
+   -30.154,
+   89.407,
+   30.637,
+   14.448
+  ],
+  "fingertip_mm": [
+   268.0,
+   -92.4,
+   7.8
+  ],
+  "h_above_table_mm": 24.8,
+  "in_box": true,
+  "in_camera_footprint": true,
+  "joint_margin_fires": [],
+  "still": "sessions/KH-DAWN-20261002/photos/pose_SPAWN_HOVER_104106.png",
+  "still_sha256": "c7963a9685cde3d747afd1509a2b5aa2235ed4ea9769245ca65f9a63b385670c",
+  "t_iso": "2026-10-02T10:41:06+05:30",
+  "note": "g"
+ },
+ "LIFT": {
+  "q6_lerobot": [
+   19.516,
+   23.56,
+   -13.187,
+   85.187,
+   27.209,
+   13.177
+  ],
+  "fingertip_mm": [
+   262.8,
+   -75.9,
+   34.6
+  ],
+  "h_above_table_mm": 51.6,
+  "in_box": true,
+  "in_camera_footprint": true,
+  "joint_margin_fires": [],
+  "still": "sessions/KH-DAWN-20261002/photos/pose_LIFT_104415.png",
+  "still_sha256": "2b71384fb677633fdebf05201209f4e366dad8ba7cc76a264ef009c8bf5e4201",
+  "t_iso": "2026-10-02T10:44:15+05:30",
+  "note": "q"
+ }
+}

@@ -1,0 +1,8 @@
+# The hand monitor's own venv (.venv_monitor, python 3.12). Nothing here goes into the lerobot venv.
+#   uv venv --python /opt/homebrew/bin/python3.12 .venv_monitor
+#   uv pip install --python .venv_monitor/bin/python -r monitor/requirements.txt
+# Direct requirements, pinned to what resolved on 2026-10-01; the full resolved set is requirements.lock.
+mediapipe==0.10.35
+numpy==2.5.3
+opencv-contrib-python==5.0.0.93
+pytest==9.1.1

@@ -1,0 +1,18 @@
+{
+ "grip_xy_mm": [
+  268.8,
+  -89.6
+ ],
+ "grip_spread_mm": 0.3,
+ "handle_heading_deg": -84.1,
+ "joint_xy_mm": [
+  267.6,
+  -77.6
+ ],
+ "free_end_xy_mm": [
+  273.3,
+  -132.6
+ ],
+ "red_len_mm": 55.3,
+ "t": "2026-10-04T04:14:19"
+}

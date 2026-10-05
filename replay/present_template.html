@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Handover demonstration - presentation __SESSION__</title>
+<style>
+:root{--bg:#07080a;--panel:#101215;--ink:#eef0f2;--mut:#8b9096;--line:#262a30;--red:#ff4d4f;--green:#3ddc84;--amber:#ffb020;--violet:#b48cff;--teal:#2ec4b6;--orange:#ff8a3d;--blue:#4da3ff;--grey:#8b9096}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;overflow:hidden}
+#panel{position:fixed;top:0;right:0;width:720px;height:1080px;background:var(--panel);transform-origin:top right;border-left:1px solid var(--line);overflow:hidden}
+#top{position:absolute;left:0;top:0;width:720px;height:420px}
+#mid{position:absolute;left:0;top:420px;width:720px;height:420px;border-top:1px solid var(--line)}
+#bot{position:absolute;left:0;top:840px;width:720px;height:240px;border-top:1px solid var(--line)}
+canvas{display:block;position:absolute;left:0;top:0}
+#badge{position:absolute;left:16px;top:14px;max-width:510px;padding:10px 18px 12px 16px;border-radius:10px;background:rgba(8,9,11,.84);border-left:10px solid var(--c,#8b9096);box-shadow:0 6px 28px rgba(0,0,0,.55);pointer-events:none}
+#bstamp{display:none;margin:-2px 0 8px;padding:4px 10px;background:var(--red);color:#fff;font-weight:800;font-size:19px;letter-spacing:.04em;border-radius:4px}
+#bl{font-size:38px;font-weight:800;line-height:1.08;color:var(--c,#8b9096);letter-spacing:.01em}
+#bs{font-size:19px;color:#d4d7da;margin-top:5px;line-height:1.3}
+#chips{position:absolute;left:16px;top:0;max-width:640px;pointer-events:none}
+.chip{display:block;width:max-content;max-width:640px;margin-top:6px;padding:4px 10px;border-radius:5px;background:rgba(8,9,11,.82);border:1px solid var(--line);font-size:16px;color:#d4d7da;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip.bad{border-color:var(--red);color:#ffb3b4}.chip.ok{border-color:#2b6b47}.chip.key{border-color:#d4d7da;color:#fff;font-weight:600}
+#stamps{position:absolute;left:16px;bottom:54px;pointer-events:none}
+.stamp{display:inline-block;margin-right:6px;padding:3px 8px;border:2px solid var(--red);color:var(--red);font-weight:800;font-size:13px;letter-spacing:.05em;border-radius:4px;background:rgba(8,9,11,.8)}
+#cutnote{position:absolute;left:16px;right:16px;bottom:104px;display:none;padding:8px 12px;border-radius:6px;background:rgba(8,9,11,.88);border:1px dashed var(--amber);color:var(--amber);font-size:17px;pointer-events:none}
+#title{position:absolute;left:16px;bottom:10px;font-size:13.5px;color:var(--mut);max-width:450px;line-height:1.4;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#tipro{font:13px ui-monospace,SFMono-Regular,Menlo,monospace;color:#c9ccd0;margin-bottom:6px}
+#leg3{position:absolute;right:16px;top:16px;font-size:12px;color:var(--mut);text-align:right;line-height:1.5;pointer-events:none}
+#title b{color:var(--ink);font-weight:700;letter-spacing:.05em}
+#clock{position:absolute;right:16px;bottom:8px;text-align:right;pointer-events:none}
+#ct{font:700 30px/1 ui-monospace,SFMono-Regular,Menlo,monospace}
+#cw{font-size:15px;color:var(--mut);margin-top:4px}
+#loghead{height:30px;padding:6px 16px 0;font-size:14px;font-weight:700;letter-spacing:.08em;color:var(--mut)}
+#loghead span{font-weight:400;letter-spacing:0}
+#log{position:absolute;left:0;right:0;top:30px;bottom:0;overflow:hidden;padding:0 12px 6px 16px;font:15px/22px ui-monospace,SFMono-Regular,Menlo,monospace}
+.ln{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#c9ccd0}
+.ln .lt{color:var(--mut);margin-right:10px}
+.ln.freeze,.ln.bad,.ln.unsafe{color:#ff8587}.ln.judge{color:#cdb4ff}.ln.key{color:#fff;font-weight:700}.ln.plan{color:#7fe3a8}
+.ln.step{color:#7d8389}.ln.dim,.ln.check{color:#8b9096}.ln.head{color:#fff}
+.ln.new{animation:flash 1.4s ease-out}
+@keyframes flash{from{background:rgba(255,255,255,.16)}to{background:transparent}}
+#ctl{position:fixed;left:16px;bottom:16px;z-index:5;width:min(560px,calc(100vw - 32px));padding:12px 14px;border-radius:10px;background:rgba(22,24,28,.94);border:1px solid var(--line);font-size:14px}
+#ctl.hide{display:none}
+#ctl button{font:600 15px/1 inherit;font-family:inherit;color:var(--ink);background:#23272d;border:1px solid #3a4048;border-radius:6px;padding:8px 12px;cursor:pointer}
+#ctl button.on{background:var(--ink);color:#111;border-color:var(--ink)}
+#ctl .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#scrub{flex:1;min-width:160px;accent-color:var(--green)}
+#ctime{font:13px ui-monospace,Menlo,monospace;color:var(--mut)}
+#ctl .help{margin-top:8px;color:var(--mut);font-size:12.5px}
+</style>
+</head>
+<body>
+<div id="panel">
+  <div id="top">
+    <canvas id="c3" width="720" height="420"></canvas>
+    <div id="badge"><div id="bstamp"></div><div id="bl">READY</div><div id="bs">press play</div></div>
+    <div id="chips"></div>
+    <div id="stamps"></div>
+    <div id="cutnote"></div>
+    <div id="title"></div>
+    <div id="leg3"><span style="color:#ff4d4f">&#9679;</span> froze &middot; <span style="color:#3ddc84">&#9679;</span> a plan took over<br><span style="color:#ffb020">&#9711;</span> the hand, as the monitor reports it<br>box: the table to 150 mm</div>
+    <div id="clock"><div id="tipro"></div><div id="ct">+00:00.0</div><div id="cw"></div></div>
+  </div>
+  <div id="mid"><canvas id="tl" width="720" height="420"></canvas></div>
+  <div id="bot"><div id="loghead">CALL LOG <span>&middot; one line per check, in chain order</span></div><div id="log"></div></div>
+</div>
+<div id="ctl">
+  <div class="row"><button id="play">&#9654; Play</button><button data-s="1">1&times;</button><button data-s="2">2&times;</button><button data-s="4">4&times;</button><input id="scrub" type="range" min="0" step="0.05" value="0"><span id="ctime"></span></div>
+  <div class="help">space play / pause &middot; &larr; &rarr; 5 s &middot; N next event &middot; R restart &middot; C cuts on / off &middot; H hide this bar</div>
+</div>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+"use strict";
+const D = JSON.parse(document.getElementById("data").textContent);
+const $ = id => document.getElementById(id);
+const Q = new URLSearchParams(location.search);
+const S = D.steps, N = S.t.length, DT = 1 / 15;
+const COL = {moving:"#3ddc84",reorient:"#2ec4b6",release:"#ff8a3d",freeze:"#ff4d4f",judge:"#b48cff",unsafe:"#ff4d4f",wait:"#ffb020",hold:"#4da3ff",idle:"#8b9096"};
+const PH = {IDLE:"#6b7280",SETUP:"#6b7280",GRASP:"#5b8def",LIFT:"#3f6fd1",CP1:"#b08ad6",CP2:"#b08ad6",CP3:"#b08ad6",APPROACH_ZONE:"#2e9e8f",PRE_PLACE:"#2a8577",PLACE:"#d39b2a",RETREAT:"#7d8b99",ASK:"#c0392b",FREEZE:"#c0392b",WAIT:"#c97a6f",HANDOVER_APPROACH:"#27ae60",REORIENT:"#2ec4b6",HOLD:"#8e6bbf",RELEASE:"#ff7a1a",PLACE_APPROACH:"#27ae60",PLACE_DESCENT:"#16a085",PLACE_LIFTOFF:"#95a5a6"};
+const LANES = ["1 joint margin","2 joint speed","3 workspace box","4 gripper load","5 loop time","6 kill switch","7 hand in workspace","8 hand link"];
+const esc = s => String(s).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const pad = (n, w) => String(n).padStart(w, "0");
+function fmt(t){ const s = Math.max(0, t), m = Math.floor(s / 60); return `${pad(m,2)}:${pad((s - m*60).toFixed(1), 4)}`; }
+function fmtDur(s){ const m = Math.floor(s / 60); return m ? `${m} min ${Math.round(s - m*60)} s` : `${s.toFixed(0)} s`; }
+function last(arr, t, key){ let lo = 0, hi = arr.length - 1, r = -1; while(lo <= hi){ const m = (lo + hi) >> 1; if((key ? key(arr[m]) : arr[m]) <= t){ r = m; lo = m + 1; } else hi = m - 1; } return r; }
+
+// ---- layout: landscape 1920x1080 by default (the operator, 2026-10-05: the 3D view on top, the timeline and the
+//      call log under it, for the video); ?layout=portrait is the 720x1080 right-hand panel. ?record=1 hides the bar.
+const LAND = Q.get("layout") !== "portrait";
+const LAY = LAND ? {W: 1920, H: 1080, top: [0, 0, 1920, 540], mid: [0, 540, 1180, 540], bot: [1180, 540, 740, 540]}
+                 : {W: 720, H: 1080, top: [0, 0, 720, 420], mid: [0, 420, 720, 420], bot: [0, 840, 720, 240]};
+(() => { const P = $("panel"); P.style.width = LAY.W + "px"; P.style.height = LAY.H + "px";
+  if(LAND){ Object.assign(P.style, {right: "auto", left: "0", transformOrigin: "top left", borderLeft: "none"});
+    $("mid").style.borderRight = "1px solid var(--line)"; }
+  for(const k of ["top", "mid", "bot"]){ const [x, y, w, h] = LAY[k];
+    Object.assign($(k).style, {left: x + "px", top: y + "px", width: w + "px", height: h + "px"}); }
+  $("c3").setAttribute("width", LAY.top[2]); $("c3").setAttribute("height", LAY.top[3]);
+  $("tl").setAttribute("width", LAY.mid[2]); $("tl").setAttribute("height", LAY.mid[3]);
+  if(Q.has("record")) $("ctl").classList.add("hide"); })();
+const C3W = LAY.top[2], C3H = LAY.top[3], TLW = LAY.mid[2], TLH = LAY.mid[3], KY = TLH / 420;
+const REC = Q.has("record");                 // replay/render_mp4.mjs drives the frames: no wall-clock animation
+
+// ---- time: cuts (a stretch with no row, longer than 30 s) play in cut_show_s
+let useCuts = !Q.has("real");
+const cutsNow = () => useCuts ? D.cuts : [];
+function tauOf(t){ let s = 0; for(const [a, b] of cutsNow()){ if(t <= a) break; const k = D.cut_show_s / (b - a); s += (Math.min(t, b) - a) * (1 - k); } return t - s; }
+function tOf(tau){ let shift = 0; for(const [a, b] of cutsNow()){ const ta = a - shift; if(tau <= ta) break; if(tau >= ta + D.cut_show_s){ shift += (b - a) - D.cut_show_s; continue; } return a + (tau - ta) * (b - a) / D.cut_show_s; } return tau + shift; }
+let TAU_END = tauOf(D.t_end);
+
+// ---- panel scale, title, stamps
+function scalePanel(){ const s = Q.has("scale") ? 1 : Math.min(1, innerHeight / LAY.H, innerWidth / LAY.W); $("panel").style.transform = s < 1 ? `scale(${s})` : ""; }
+addEventListener("resize", scalePanel); scalePanel();
+$("title").innerHTML = `<b>DEMONSTRATION</b> &middot; ${esc(D.session)}` + (D.chain_ok ? " &middot; chain verifies" : ` &middot; <span style="color:var(--red)">CHAIN BROKEN</span>`)
+  + `<br>${esc(D.mode)} &middot; judge ${esc(String(D.judge || "off").replace(/-\d{8}$/, ""))}`;
+$("stamps").innerHTML = D.stamps.filter(s => s !== D.layer_off).map(s => `<span class="stamp">${esc(s)}</span>`).join("");
+if(D.layer_off){ $("bstamp").textContent = D.layer_off; $("bstamp").style.display = "block";
+  $("leg3").innerHTML = `<span style="color:#ff4d4f">&#9679;</span> froze<br><span style="color:#ff8587;font-weight:700">hand monitor OFF: no hand is tracked</span><br>box: the table to 150 mm`; }
+const tzLabel = D.tz_min === 330 ? "IST" : `UTC${D.tz_min >= 0 ? "+" : "-"}${pad(Math.floor(Math.abs(D.tz_min)/60),2)}:${pad(Math.abs(D.tz_min)%60,2)}`;
+function wallAt(t){ const d = new Date((D.wall0 + t) * 1000 + D.tz_min * 60000); return `${pad(d.getUTCHours(),2)}:${pad(d.getUTCMinutes(),2)}:${pad(d.getUTCSeconds(),2)} ${tzLabel}`; }
+
+// ---- 3D path
+const c3 = $("c3"), g3 = c3.getContext("2d");
+let yaw = -0.9, pitch = 0.55, drag = null, fit3 = null;
+function hiDPI(c){ const r = devicePixelRatio || 1, w = +c.getAttribute("width"), h = +c.getAttribute("height"); c.width = w * r; c.height = h * r; c.style.width = w + "px"; c.style.height = h + "px"; const g = c.getContext("2d"); g.setTransform(r, 0, 0, r, 0, 0); return g; }
+hiDPI(c3);
+const B = D.box, TZ = B[4], ZT = B[4] + 150, CX = (B[0] + B[1]) / 2, CY = (B[2] + B[3]) / 2, CZ = B[4] + 60;
+function raw(p){ const X = p[0] - CX, Y = p[1] - CY, Z = p[2] - CZ; const x1 = X*Math.cos(yaw) - Y*Math.sin(yaw), y1 = X*Math.sin(yaw) + Y*Math.cos(yaw); return [x1, -(y1*Math.sin(pitch) + Z*Math.cos(pitch))]; }
+function refit(){ const C = [[B[0],B[2]],[B[1],B[2]],[B[1],B[3]],[B[0],B[3]]], pts = [];
+  C.forEach(c => { pts.push(raw([c[0], c[1], TZ])); pts.push(raw([c[0], c[1], ZT])); }); pts.push(raw([0, 0, TZ]));
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const RX = LAND ? [560, 1680] : [30, 600], RY = LAND ? [36, 468] : [112, 340], sc = Math.min((RX[1]-RX[0]) / (x1-x0), (RY[1]-RY[0]) / (y1-y0));
+  fit3 = {sc, ox: (RX[0]+RX[1])/2 - sc*(x0+x1)/2, oy: (RY[0]+RY[1])/2 - sc*(y0+y1)/2}; }
+function P(p){ const r = raw(p); return [fit3.ox + r[0]*fit3.sc, fit3.oy + r[1]*fit3.sc]; }
+refit();
+function stepAt(t){ return last(S.t, t); }
+function tipAt(t){ const i = stepAt(t); if(i < 0) return S.tcp[0]; const j = Math.min(N - 1, i + 1); const a = S.t[i], b = S.t[j];
+  if(j === i || b - a > 0.2 || t <= a) return S.tcp[i]; const u = (t - a) / (b - a); return S.tcp[i].map((v, k) => v + (S.tcp[j][k] - v) * u); }
+function palmAt(t, i){ if(i >= 0 && S.hp[i]) return S.hp[i]; const k = last(D.palms, t, p => p[0]); return k < 0 ? null : [D.palms[k][1], D.palms[k][2]]; }
+function draw3(t){
+  const g = g3, w = C3W, h = C3H; g.clearRect(0, 0, w, h);
+  const C = [[B[0],B[2]],[B[1],B[2]],[B[1],B[3]],[B[0],B[3]]];
+  g.strokeStyle = "#3a3f46"; g.lineWidth = 1; g.setLineDash([6, 5]);
+  [TZ, ZT].forEach(z => { g.beginPath(); C.forEach((c, i) => { const q = P([c[0], c[1], z]); i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.closePath(); g.stroke(); });
+  C.forEach(c => { const a = P([c[0], c[1], TZ]), b = P([c[0], c[1], ZT]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); });
+  g.setLineDash([]);
+  [["zone", "#2ecc71", "place zone"], ["spawn", "#4da3ff", "spawn"]].forEach(([k, col, lab]) => { const qs = D.quads[k].map(c => P([c[0], c[1], TZ]));
+    g.fillStyle = col + "22"; g.strokeStyle = col; g.lineWidth = 1.5; g.beginPath(); qs.forEach((q, i) => i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1])); g.closePath(); g.fill(); g.stroke();
+    const cx = qs.reduce((s, q) => s + q[0], 0) / 4, cy = qs.reduce((s, q) => s + q[1], 0) / 4; g.fillStyle = col; g.font = "13px sans-serif"; g.textAlign = "center"; g.fillText(lab, cx, cy + 4); g.textAlign = "left"; });
+  const o = P([0, 0, TZ]); g.fillStyle = "#8b9096"; g.beginPath(); g.arc(o[0], o[1], 5, 0, 6.3); g.fill(); g.font = "13px sans-serif"; g.fillText("arm base", o[0] + 9, o[1] + 4);
+  const i = stepAt(t);
+  g.lineCap = "round";
+  for(let k = 1; k < N; k++){ if(S.t[k] - S.t[k-1] > 2) continue; const a = P(S.tcp[k-1]), b = P(S.tcp[k]); const past = k <= i;
+    g.strokeStyle = past ? (PH[D.phases[S.ph[k]]] || "#aaa") : "rgba(160,166,173,.16)"; g.lineWidth = past ? 3 : 1.5; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
+  // the hand, where the monitor last put it, while it reports one
+  if(!D.layer_off && i >= 0 && S.hand[i] > 0){ const pm = palmAt(t, i); if(pm){ const q = P([pm[0], pm[1], TZ + 20]); g.fillStyle = "rgba(255,176,32,.25)"; g.strokeStyle = "#ffb020"; g.lineWidth = 2.5;
+      g.beginPath(); g.arc(q[0], q[1], 16, 0, 6.3); g.fill(); g.stroke(); g.fillStyle = "#ffb020"; g.font = "700 14px sans-serif"; g.fillText(S.hand[i] > 1 ? `${S.hand[i]} HANDS` : "HAND", q[0] + 20, q[1] + 5); } }
+  D.events.forEach(e => { if(e.t > t || !e.tcp || (e.kind !== "freeze" && e.kind !== "takeover")) return; const q = P(e.tcp), col = e.kind === "freeze" ? "#ff4d4f" : "#3ddc84";
+    const age = t - e.t; if(age < 1.5){ g.strokeStyle = col; g.globalAlpha = 1 - age / 1.5; g.lineWidth = 3; g.beginPath(); g.arc(q[0], q[1], 8 + age * 22, 0, 6.3); g.stroke(); g.globalAlpha = 1; }
+    g.fillStyle = col; g.strokeStyle = "#fff"; g.lineWidth = 2; g.beginPath(); g.arc(q[0], q[1], 7, 0, 6.3); g.fill(); g.stroke(); });
+  const tip = tipAt(t), q = P(tip), s0 = P([tip[0], tip[1], TZ]);
+  g.strokeStyle = "rgba(255,255,255,.35)"; g.setLineDash([3, 4]); g.lineWidth = 1; g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(s0[0], s0[1]); g.stroke(); g.setLineDash([]);
+  g.fillStyle = "rgba(255,255,255,.25)"; g.beginPath(); g.ellipse(s0[0], s0[1], 7, 3, 0, 0, 6.3); g.fill();
+  g.shadowColor = "#fff"; g.shadowBlur = 14; g.fillStyle = "#fff"; g.beginPath(); g.arc(q[0], q[1], 7, 0, 6.3); g.fill(); g.shadowBlur = 0;
+  $("tipro").textContent = `fingertip ${tip[0].toFixed(0)}, ${tip[1].toFixed(0)} mm, ${(tip[2] - TZ).toFixed(0)} mm up`;
+}
+c3.addEventListener("pointerdown", e => { drag = [e.clientX, e.clientY, yaw, pitch]; c3.setPointerCapture(e.pointerId); });
+c3.addEventListener("pointermove", e => { if(!drag) return; yaw = drag[2] + (e.clientX - drag[0]) * 0.01; pitch = Math.max(0.05, Math.min(1.5, drag[3] + (e.clientY - drag[1]) * 0.01)); refit(); dirty = true; });
+c3.addEventListener("pointerup", () => drag = null);
+
+// ---- timeline: drawn once (lanes over the played time), then the future dimmed and the now-line per frame
+const tl = $("tl"), gt = hiDPI(tl), stat = document.createElement("canvas");
+const TL = {L: 156, R: 16, top: 30, ph: [34 * KY, 30 * KY], mon0: 72 * KY, monH: 17 * KY, monG: 4 * KY, judge: [248 * KY, 46 * KY],
+            keys: [302 * KY, 40 * KY], axis: 358 * KY};
+const xT = t => TL.L + tauOf(t) / Math.max(1e-6, TAU_END) * (TLW - TL.L - TL.R);
+function hatch(g, x, y, w, h, col){ g.save(); g.beginPath(); g.rect(x, y, w, h); g.clip(); g.strokeStyle = col; g.lineWidth = 1; for(let k = -h; k < w; k += 6){ g.beginPath(); g.moveTo(x + k, y + h); g.lineTo(x + k + h, y); g.stroke(); } g.restore(); }
+function drawStatic(){
+  stat.width = TLW * (devicePixelRatio || 1); stat.height = TLH * (devicePixelRatio || 1); const g = stat.getContext("2d"); g.setTransform(devicePixelRatio || 1, 0, 0, devicePixelRatio || 1, 0, 0);
+  g.fillStyle = "#101215"; g.fillRect(0, 0, TLW, TLH);
+  g.fillStyle = "#8b9096"; g.font = "700 14px sans-serif"; g.fillText("TIMELINE", 16, 21); g.font = "14px sans-serif";
+  g.fillText(`0:00 → ${fmt(D.t_end)} from the first motion` + (cutsNow().length ? ` · ${cutsNow().length} cut (✂)` : ""), 100, 21);
+  const W = TLW - TL.L - TL.R; g.font = "14px sans-serif"; g.textBaseline = "middle";
+  const lab = (txt, y, h) => { g.fillStyle = "#aab0b6"; g.fillText(txt, 16, y + h / 2); };
+  lab("phase", TL.ph[0], TL.ph[1]); g.fillStyle = "#1b1e22"; g.fillRect(TL.L, TL.ph[0], W, TL.ph[1]);
+  D.track.forEach((b, k) => { if(b[3] !== "freeze") return; const nx = D.track[k + 1] ? D.track[k + 1][0] : D.t_end; hatch(g, xT(b[0]), TL.ph[0], Math.max(2, xT(nx) - xT(b[0])), TL.ph[1], "rgba(255,77,79,.55)"); });
+  let a = 0; for(let i = 1; i <= N; i++){ if(i === N || S.ph[i] !== S.ph[a] || S.t[i] - S.t[i-1] > 2){ const xa = xT(S.t[a]), xb = xT(S.t[i-1] + DT), name = D.phases[S.ph[a]];
+      g.fillStyle = PH[name] || "#888"; g.fillRect(xa, TL.ph[0], Math.max(1.5, xb - xa), TL.ph[1]);
+      if(xb - xa > 46){ g.save(); g.beginPath(); g.rect(xa, TL.ph[0], xb - xa - 3, TL.ph[1]); g.clip(); g.fillStyle = "#fff"; g.font = "600 12px sans-serif"; g.fillText(name.replace(/_/g, " "), xa + 4, TL.ph[0] + TL.ph[1] / 2); g.restore(); g.font = "14px sans-serif"; }
+      a = i; } }
+  for(let m = 0; m < 8; m++){ const y = TL.mon0 + m * (TL.monH + TL.monG); lab(LANES[m], y, TL.monH); g.fillStyle = "#1b1e22"; g.fillRect(TL.L, y, W, TL.monH);
+    let r = 0; for(let i = 1; i <= N; i++){ if(i === N || S.m[i][m] !== S.m[r][m] || S.t[i] - S.t[i-1] > 2){ const c = S.m[r][m], xa = xT(S.t[r]), xb = Math.max(xa + 2, xT(S.t[i-1] + DT));
+        if(c === "1"){ g.fillStyle = "#ff4d4f"; g.fillRect(xa, y, xb - xa, TL.monH); }
+        else if(c === "2"){ g.fillStyle = "rgba(255,176,32,.75)"; g.fillRect(xa, y, xb - xa, TL.monH); }
+        else if(c === "3"){ hatch(g, xa, y, xb - xa, TL.monH, "#4a5058"); g.fillStyle = "#8b9096"; g.font = "600 11px sans-serif"; if(xb - xa > 30) g.fillText("OFF", xa + 4, y + TL.monH / 2 + 1); g.font = "14px sans-serif"; }
+        r = i; } } }
+  lab("judge", TL.judge[0], TL.judge[1]); lab("keys", TL.keys[0], TL.keys[1]);
+  g.fillStyle = "#1b1e22"; g.fillRect(TL.L, TL.judge[0], W, TL.judge[1]); g.fillRect(TL.L, TL.keys[0], W, TL.keys[1]);
+  if(D.layer_off){ hatch(g, TL.L, TL.judge[0], W, TL.judge[1], "#4a5058"); g.fillStyle = "#c9ccd0"; g.font = "700 13px sans-serif"; g.fillText("OFF \u2014 no judge (--layer-off)", TL.L + 8, TL.judge[0] + TL.judge[1] / 2); }
+  let lastLab = -99; g.font = "600 12px sans-serif"; g.textAlign = "center";
+  D.events.forEach(e => { if(e.kind !== "judge") return; const xb = xT(e.t), xa = xT(e.t - (e.lat || 0)), y = TL.judge[0] + 28, col = e.unsafe ? "#ff4d4f" : "#b48cff";
+    g.strokeStyle = col; g.lineWidth = 2; g.beginPath(); g.moveTo(xa, y); g.lineTo(xb, y); g.stroke();
+    g.fillStyle = col; g.beginPath(); g.moveTo(xb, y - 8); g.lineTo(xb + 7, y); g.lineTo(xb, y + 8); g.lineTo(xb - 7, y); g.closePath(); g.fill();
+    if(xb - lastLab > 34){ g.fillText(`${(e.lat || 0).toFixed(1)}s`, xb, TL.judge[0] + 10); lastLab = xb; } });
+  D.events.forEach(e => { if(e.kind !== "key") return; const x = xT(e.t), y = TL.keys[0], col = e.refused || !e.accepted ? "#ff4d4f" : (e.auto ? "#ffb020" : "#ffffff");
+    g.strokeStyle = col; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y + 3); g.lineTo(x, y + 18); g.stroke(); g.fillStyle = col; g.font = "700 13px sans-serif"; g.fillText(e.key, x, y + 28);
+    if(e.auto){ g.font = "10px sans-serif"; g.fillText("auto", x, y + 38); } });
+  g.textAlign = "left";
+  D.events.forEach(e => { if(e.kind !== "freeze" && e.kind !== "takeover") return; g.strokeStyle = e.kind === "freeze" ? "rgba(255,77,79,.9)" : "rgba(61,220,132,.9)"; g.lineWidth = 1.5;
+    g.beginPath(); g.moveTo(xT(e.t), TL.ph[0] - 2); g.lineTo(xT(e.t), TL.axis - 6); g.stroke(); });
+  cutsNow().forEach(([a, b]) => { const xa = xT(a), xb = xT(b); hatch(g, xa, TL.ph[0], Math.max(3, xb - xa), TL.axis - 6 - TL.ph[0], "rgba(255,176,32,.35)");
+    g.fillStyle = "#ffb020"; g.font = "600 12px sans-serif"; g.textAlign = "center"; g.fillText(`✂ ${fmt(b - a).replace(/\.\d$/, "")}`, (xa + xb) / 2, TL.axis + 30); g.textAlign = "left"; });
+  g.strokeStyle = "#3a3f46"; g.lineWidth = 1; g.beginPath(); g.moveTo(TL.L, TL.axis); g.lineTo(TLW - TL.R, TL.axis); g.stroke();
+  g.fillStyle = "#8b9096"; g.font = "13px sans-serif"; g.textAlign = "center";
+  const inCut = t => cutsNow().some(([a, b]) => a < t && t < b);
+  const ticks = s => { const out = [], ts = []; let lx = -99; for(let t = 0; t <= D.t_end + 1e-6; t += s) ts.push(t); cutsNow().forEach(c => ts.push(c[1]));
+    ts.sort((a, b) => a - b).forEach(t => { if(inCut(t)) return; const x = xT(t); if(x - lx < 46) return; out.push([t, x]); lx = x; }); return out; };
+  const stepT = [5, 10, 15, 30, 60, 120, 300, 600, 1800].find(s => ticks(s).length <= 9) || 3600;
+  ticks(stepT).forEach(([t, x]) => { g.beginPath(); g.moveTo(x, TL.axis); g.lineTo(x, TL.axis + 5); g.stroke(); g.fillText(fmt(t).replace(/\.\d$/, ""), x, TL.axis + 16); });
+  g.textAlign = "left"; g.font = "12px sans-serif"; g.fillStyle = "#8b9096";
+  g.fillText("red: fired · amber: a hand present (7) · grey hatch: OFF · ◆ judge (bar = latency) · keys: white typed, amber auto", 16, TLH - 16);
+}
+drawStatic();
+function drawTL(t){
+  const g = gt; g.drawImage(stat, 0, 0, TLW, TLH);
+  const x = xT(t); g.fillStyle = "rgba(16,18,21,.72)"; g.fillRect(x, TL.ph[0] - 2, TLW - TL.R - x + 2, TL.axis - TL.ph[0] - 2);
+  g.strokeStyle = "#fff"; g.lineWidth = 2; g.beginPath(); g.moveTo(x, TL.ph[0] - 4); g.lineTo(x, TL.axis); g.stroke();
+  const lab = fmt(t); g.font = "700 12px ui-monospace,Menlo,monospace"; const tw = g.measureText(lab).width + 10, lx = Math.min(TLW - TL.R - tw, Math.max(TL.L, x - tw / 2));
+  g.fillStyle = "#fff"; g.fillRect(lx, TL.axis + 20, tw, 18); g.fillStyle = "#111"; g.fillText(lab, lx + 5, TL.axis + 33);
+}
+
+// ---- the badge, the chips, the log
+let badgeKey = "", chipKey = "";
+function stateAt(t){
+  let o = null; for(const v of D.over){ if(v[0] <= t && t < v[1] && (!o || v[0] >= o[0])) o = v; }
+  if(o) return [o[2], o[3], o[4]];
+  const k = last(D.track, t, b => b[0]); return k < 0 ? (t <= 0 ? ["READY", "the first motion is at 00:00", "idle"] : ["IDLE", "", "idle"]) : [D.track[k][1], D.track[k][2], D.track[k][3]];
+}
+function updBadge(t){
+  const [l, s, c] = stateAt(t), key = l + "|" + s + "|" + c; if(key === badgeKey) return; badgeKey = key;
+  $("badge").style.setProperty("--c", COL[c] || "#8b9096"); $("bl").textContent = l; $("bs").textContent = s || ""; $("bs").style.display = s ? "block" : "none";
+}
+function updChips(t){
+  const live = D.chips.filter(c => c[0] <= t && t - c[0] < 4).slice(-2), key = live.map(c => c[0] + c[1]).join("|"); if(key === chipKey) return; chipKey = key;
+  const b = $("badge"); $("chips").style.top = (b.offsetTop + b.offsetHeight + 2) + "px";
+  $("chips").innerHTML = live.map(c => `<span class="chip ${c[2]}">${esc(c[1])}</span>`).join("");
+}
+function updCut(t){
+  const c = cutsNow().find(([a, b]) => a < t && t < b), el = $("cutnote");
+  if(!c){ el.style.display = "none"; return; }
+  el.style.display = "block"; el.textContent = `✂ ${fmtDur(c[1] - c[0])} with no row in the chain, played in ${D.cut_show_s} s: nothing was commanded (every command is a step row). C plays it at real time.`;
+}
+const logEl = $("log"); let shown = 0;
+function updLog(t){
+  const n = last(D.log, t, l => l[0]) + 1; if(n === shown) return;
+  if(n < shown){ logEl.innerHTML = ""; shown = 0; }
+  const frag = document.createDocumentFragment();
+  for(let i = shown; i < n; i++){ const [lt, cls, txt] = D.log[i], d = document.createElement("div"); d.className = `ln ${cls}` + (n - shown < 6 && lt >= 0 && !REC ? " new" : "");
+    d.innerHTML = `<span class="lt">${lt < 0 ? " pre   " : "+" + fmt(lt)}</span>${esc(txt)}`; d.title = txt; frag.appendChild(d); }
+  logEl.appendChild(frag); shown = n; while(logEl.children.length > 120){ logEl.removeChild(logEl.firstChild); } logEl.scrollTop = logEl.scrollHeight;
+}
+
+// ---- playback
+let tau = Q.has("t") ? tauOf(+Q.get("t")) : 0, playing = false, speed = [1, 2, 4].includes(+Q.get("speed")) ? +Q.get("speed") : 1, wall = 0, dirty = true;
+const scrub = $("scrub"); scrub.max = TAU_END.toFixed(2);
+function setSpeed(s){ speed = s; document.querySelectorAll("#ctl [data-s]").forEach(b => b.classList.toggle("on", +b.dataset.s === s)); }
+function setPlay(p){ playing = p && tau < TAU_END; wall = performance.now(); $("play").innerHTML = playing ? "&#10074;&#10074; Pause" : "&#9654; Play"; }
+function seek(v){ tau = Math.max(0, Math.min(TAU_END, v)); wall = performance.now(); dirty = true; }
+function nextEvent(){ const t = tOf(tau) + 0.05, ts = [...D.track.map(b => b[0]), ...D.over.map(o => o[0]), ...D.chips.map(c => c[0]), ...D.events.map(e => e.t)].filter(x => x > t).sort((a, b) => a - b);
+  if(ts.length) seek(tauOf(ts[0]) - 0.3); }
+$("play").onclick = () => { if(tau >= TAU_END) seek(0); setPlay(!playing); };
+document.querySelectorAll("#ctl [data-s]").forEach(b => b.onclick = () => setSpeed(+b.dataset.s));
+scrub.oninput = () => seek(+scrub.value);
+addEventListener("keydown", e => {
+  if(e.target.tagName === "INPUT" && e.key !== " ") return;
+  const k = e.key.toLowerCase();
+  if(e.key === " "){ e.preventDefault(); if(tau >= TAU_END) seek(0); setPlay(!playing); }
+  else if(e.key === "ArrowRight") seek(tau + 5); else if(e.key === "ArrowLeft") seek(tau - 5);
+  else if(k === "n") nextEvent(); else if(k === "r") seek(0); else if(k === "h") $("ctl").classList.toggle("hide");
+  else if(k === "c"){ const t = tOf(tau); useCuts = !useCuts; TAU_END = tauOf(D.t_end); scrub.max = TAU_END.toFixed(2); drawStatic(); seek(tauOf(t)); }
+  else if(["1", "2", "4"].includes(e.key)) setSpeed(+e.key);
+});
+function frame(now){
+  // a hidden tab pauses the playback (at most 0.25 s per frame), it never jumps ahead
+  if(playing){ tau += Math.min(0.25, Math.max(0, now - wall) / 1000) * speed; wall = now; if(tau >= TAU_END){ tau = TAU_END; setPlay(false); } dirty = true; }
+  if(dirty){ const t = tOf(tau); draw3(t); drawTL(t); updBadge(t); updChips(t); updCut(t); updLog(t);
+    $("ct").textContent = "+" + fmt(t); $("cw").textContent = `${wallAt(t)} · ${speed}×`; scrub.value = tau.toFixed(2);
+    $("ctime").textContent = `${fmt(t)} / ${fmt(D.t_end)}`; dirty = playing; }
+  requestAnimationFrame(frame);
+}
+setSpeed(speed); setPlay(Q.has("autoplay")); requestAnimationFrame(frame);
+</script>
+</body>
+</html>
