@@ -1,7 +1,7 @@
 # Trust-layer demonstration — SO-101
 
-**A demonstration** on an SO-101 arm with a **plastic prop tool** (a screwdriver); the layer-off clip uses a **prop
-hand**. Nothing here is part of any pre-registered evaluation.
+A demonstration on an SO-101 with a real screwdriver, handed to the operator's own hand. Nothing here is part of any
+pre-registered evaluation.
 
 [![license: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 ![python: 3.12](https://img.shields.io/badge/python-3.12-3776AB.svg?logo=python&logoColor=white)
@@ -9,7 +9,7 @@ hand**. Nothing here is part of any pre-registered evaluation.
 ![judge: Claude Haiku 4.5](https://img.shields.io/badge/judge-Claude%20Haiku%204.5-8A63D2.svg)
 ![log: hash-chained](https://img.shields.io/badge/log-hash--chained-2ea44f.svg)
 
-[Video](#video) · [The run, step by step](#the-layer-on-run-step-by-step) · [Architecture](#architecture) ·
+[Video](#video) · [Errata](#errata) · [The run, step by step](#the-layer-on-run-step-by-step) · [Architecture](#architecture) ·
 [Findings](#findings) · [Lines that do not move](#lines-that-do-not-move) · [Verify a chain](#verify-a-chain) ·
 [Running it](#running-it)
 
@@ -32,6 +32,26 @@ camera footage under the panel built from its session's log.
 - To render a panel as an MP4 (1×, from the first motion to the end, real time):
   `node replay/render_mp4.mjs sessions/<session>` → `present_1x.mp4` beside it. Videos are not committed
   (`*.mp4` is ignored).
+
+## Errata
+
+**2026-10-05 — the tool and the hand.** The labels written into the logs during the runs say a prop was used. It was
+not:
+
+| Where | What it says | What was used |
+|---|---|---|
+| Every session's `session_start` row (`label`, `grasp_segment.label`, `placement.prop`) and ARM statement (`safety_events.jsonl`) | "a rehearsed screwdriver (prop tool) handover"; "the screwdriver (plastic prop) reversed where it lies"; "plastic prop"; "the marked prop tool only"; "the screwdriver a plastic prop" | A real screwdriver — red rubber handle, metal shaft — the same one in every session here |
+| The layer-off session's `label` and ARM statement (`KH-S20261004T174200`) | "a prop hand in the place zone"; "A PROP HAND - NOT A REAL HAND - lies in the place zone for this shot" | The operator's own hand, as in the layer-on take |
+
+The frame at the layer-off take's one freeze — `sessions/KH-S20261004T174200/photos/freeze01_f001103.jpg`, named
+with its sha256 (`f050b177…`) in that freeze row — shows the operator's hand in the place zone, under the
+screwdriver held over it:
+
+<img src="sessions/KH-S20261004T174200/photos/freeze01_f001103.jpg" width="480" alt="The overhead camera's frame at the layer-off take's freeze: the screwdriver's red handle in the gripper over the place zone, the operator's fingers under it">
+
+The chains are left as they were written: every row is hash-chained, so changing a label would break the chain from
+that row on. The pages built from them (`replay.html`, `present.html`, and the panels in the video) repeat these
+labels; this erratum is the correction.
 
 ## The layer-on run, step by step
 
@@ -74,8 +94,8 @@ the first motion.
     the chain verifies; every step row carries the override stamp.
 
 **The layer-off run** (`KH-S20261004T174200`, `--layer-off`) is the same pick-and-place with the hand monitor
-(monitors 7 and 8), the judge and the planner off and a prop hand in the place zone: grasp, lift, carry, lower into
-the zone. Monitor 2 froze the arm once in the place (`shoulder_pan` read at 19.8 deg/s against 15); the operator's
+(monitors 7 and 8), the judge and the planner off, and the operator's own hand in the place zone (see
+[Errata](#errata)): grasp, lift, carry, lower into the zone. Monitor 2 froze the arm once in the place (`shoulder_pan` read at 19.8 deg/s against 15); the operator's
 `[c]` continued; `PLACED`. Every row of that chain carries `"trust_layer": "TRUST LAYER OFF — DEMONSTRATION"`.
 
 ## Architecture
@@ -166,7 +186,8 @@ and writes two self-contained pages beside the chain (no network):
 - ≤ 3 deg/s near the hand and on the descent; the pointed end ≥ 30 mm from the palm in 3D on every planned row.
 - Monitors 1–6 are never off. Monitors 7 and 8 are off only with `--layer-off`, stamped on every row.
 - Untested code runs only under `--operator-override`, stamped on every step row.
-- A plastic prop tool only; a prop hand in the layer-off clip.
+- Planned: a plastic prop tool and a prop hand. Done: a real screwdriver and the operator's own hand in both takes
+  (see Errata).
 - No secret in the repository, a log or a transcript: the API key lives in `.env` (ignored) and is never read into
   a log.
 - It is called a demonstration, and nothing here is presented as a safety certificate.

@@ -7,6 +7,19 @@ session evidence for any certificate, and nothing is presented as a safety certi
 `anchor/`, `phase0/` or `so101_sim/` has been written (`find ../../anchor ../../phase0 ../../so101_sim -newer PLAN.md
 -type f` prints nothing, 21:52).
 
+**2026-10-05 · Erratum: the tool and the hand.** The labels written into the logs during the runs say a prop was
+used; it was not. Every session's `session_start` row (`label`: "a rehearsed screwdriver (prop tool) handover";
+`grasp_segment.label`: "the screwdriver (plastic prop) reversed where it lies"; `placement.prop`: "plastic prop") and
+ARM statement in `safety_events.jsonl` ("the marked prop tool only"; "the screwdriver a plastic prop") name a prop
+tool: **a real screwdriver was used — red rubber handle, metal shaft — the same one in every session.** The layer-off
+session KH-S20261004T174200 says "a prop hand in the place zone" in its `label` and "A PROP HAND - NOT A REAL HAND -
+lies in the place zone for this shot" in its ARM statement: **the operator's own hand was in the place zone, in the
+layer-off take as in the layer-on take (KH-S20261005T015041).** The frame at the layer-off take's one freeze,
+`sessions/KH-S20261004T174200/photos/freeze01_f001103.jpg` (sha256 `f050b177…`, named in that freeze row), shows the
+operator's hand in the place zone under the screwdriver. The chains are left unedited: every row is hash-chained, and
+changing a label would break the chain from that row on; the pages built from them repeat the labels. This entry is
+the correction (README: Errata).
+
 **2026-10-04 · video prep (built 14:15–14:40, dry run only; nothing new has moved the arm).**
 - **Presentation page.** `replay/build_replay.py <session>` now writes `present.html` beside `replay.html`
   (`replay.html?present=1` opens it): a fixed 720×1080 right-hand panel on a dark page — the fingertip path in 3D
@@ -32,8 +45,8 @@ session evidence for any certificate, and nothing is presented as a safety certi
   `trust_layer: "TRUST LAYER OFF — DEMONSTRATION"`; the replay shows it as a red banner and the presentation badge as
   its top line. A monitor 1–6 freeze asks as always (no verdict on screen; [c] is the operator's alone, offered only
   when monitors 1–6 read clear after the key). Refused with `--palm-placement`, `--handover-trial`, `--hold-test`.
-  The ARM statement says what is off, that a **prop hand, not a real hand**, lies in the place zone, and where the
-  PLACE goes down to by FK of its rows: with `dawn/segments.json` the fingertip goes to ~5 mm above the table at the
+  The ARM statement says what is off, what lies in the place zone (its words, and what was there: the 2026-10-05
+  erratum above), and where the PLACE goes down to by FK of its rows: with `dawn/segments.json` the fingertip goes to ~5 mm above the table at the
   zone centre, so **anything standing higher in the zone is pressed by the screwdriver** — only monitor 4 (gripper
   load) and the operator's ESC watch that. Fixtures: `tests/test_video_prep_1004.py`, 16 passed (15:5x; the
   hold-test guard and a parse check of the page's script added).
@@ -368,8 +381,8 @@ scene has three stills in `fixtures/frames/`; the latest manifest row of each ma
   [h] / [o] then ran the standoff handover (refused: 'standoff 60', 'the tip would leave the box'). Fixed (PLAN
   decision 10): 50 mm in the approach with a re-plan above the palm, the ends of the screwdriver allowed past the box,
   [h] retries the placement, no [o].
-- **Palm placement (2026-10-03, built and dry-run only): the screwdriver is a plastic prop; the pointed end >= 30 mm
-  from the palm in 3D on every row.** Release 20 mm above the palm (+16 mm commanded for the sag). Dry runs: zone
+- **Palm placement (2026-10-03, built and dry-run only): the pointed end >= 30 mm from the palm in 3D on every
+  row.** Release 20 mm above the palm (+16 mm commanded for the sag). Dry runs: zone
   side, a 135-180 deg re-orient on the spawn box, a hand moving mid-descent (freezes), UNSAFE after a settle (asks),
   UNSAFE at the release (asks for [r]), no plan (asks). **Not yet run on the arm.** Known limits: placement fits only
   palms x ~200-280, y -60..+120 mm with the fingers pointed away from the robot or to its right (or toward the zone
